@@ -25,7 +25,9 @@ def scale_drawing(X):
     mins = np.min(centered_X, axis=0)
     strecth_ratio = 1 / np.max(np.abs(np.concatenate((maxs, mins))))
 
-    return centered_X * strecth_ratio
+    scaled_drawing = centered_X * strecth_ratio
+
+    return scaled_drawing, strecth_ratio
 
 
 def compute_drawing_descriptors(scaled_drawing):
@@ -58,11 +60,12 @@ def compute_drawing_histogram_flatten(scaled_drawing, bins=3, bins_range=[[-1,1]
 
 
 def compute_embeddings_from_drawing(drawing):
-    scaled_drawing = scale_drawing(drawing)
+    scaled_drawing, strecth_ratio = scale_drawing(drawing)
     descriptors = compute_drawing_descriptors(scaled_drawing)
     histogram = compute_drawing_histogram_flatten(scaled_drawing)
 
     embeddings = []
+    embeddings.append(strecth_ratio / 10) # divide by 10 to make this feature about the same scale as the others
     embeddings.extend(descriptors)
     embeddings.extend(histogram)
 
